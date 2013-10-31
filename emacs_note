@@ -1,0 +1,141 @@
+1. speedbar 使用
+
+sr-speedbar可以在当前frame打开speedbar
+
+n 下一行
+p 上一行
++ 展开
+- 收缩
+e 进入文件夹
+RET 编辑文件
+
+2. emacs浏览代码
+
+http://www.cnblogs.com/chiefhsing/p/3272410.html
+
+1).先在代码的顶层目录执行command
+find . -name '*.[ch]' | xargs etags
+2).打开你的Emacs，执行
+M-x visit-tags-table
+然后找到你刚才目录的那个TAGS文件，然后就emacs就会选中这个TAGS文件了。
+3). 代码跳转
+使用  M-. <function_name> 就可以跳转到对应的代码了。跳转后，可以使用M-＊跳回去。
+4). 在代码目录中运行etags -R
+如果要向现有tags表中添加，则运行etags -a 
+
+比如worker2文件夹里头，
+step1 : etags -R *.[hc]
+step2 : find .. -name '*.[ch]' | xargs etags
+
+3. 类似vim的标记
+
+ma --> C-x r <SPC> register-name  比如 C-x r <SPC> x ---> 将当前位置记录到寄存器x
+'a --> C-x r j register-name      比如 C-x r j x ---> 跳转到x记录的地点
+
+4. 类vim的^
+
+Jump to first non-whitespace character in line
+
+M-m，命令名就是back-to-indentation
+
+5. 类似vim的V操作，行首插入字符
+
+C-@ 选择,然后移动到需要操作的最后一行第一个字符，输入C-x r t RET
+
+6. 一些链接
+org-mode，最好的文档编辑利器，没有之一 : http://www.cnblogs.com/holbrook/archive/2012/04/12/2444992.html
+
+Emacs 零海拔入门 : http://wiki.woodpecker.org.cn/moin/EmacsSuperEasyTutorial
+
+emacs 入门 : http://i.linuxtoy.org/docs/guide/ch25.html
+
+emacs org mode 组织你的意念 : http://i.linuxtoy.org/docs/guide/ch32s08.html
+
+http://logicbaby.wordpress.com/2011/10/04/手把手教你emacs-cedet-cc自动补全/
+
+7. 基本操作
+
+M-f 词尾
+M-b 词首
+C-a 行首
+M-m 行第一个非空字符
+M-/ 补全
+
+8. 替换与查找
+
+ESC % 或 M-% 或 M-x query-replace询问替换
+
+M-x query-replace-regexp正则表达询问替换
+
+M-x replace-string替换
+
+M-x replace-regexp正则表达式替换
+
+C-x C-w 另存为
+
+9.tab
+
+emacs里的tab不是tab的,tab只管缩进,缩进与模式有关, 比如你选stronstrup就是5个空格, linux的是8个空格.
+
+至于类似tab的是M-i,但这鬼东西是tab-to-tab-stop,也不是插入tab字符.
+
+真正插入tab字符的是C-q <tab> 
+
+10. 查找
+
+M-x grep 就进入了查找模式
+
+./configure --enable-checking=no --enable-check-lisp-object-type=no --enable-autodepend --enable-link-time-optimization=no
+bzr checkout bzr://cedet.bzr.sourceforge.net/bzrroot/cedet/code/trunk cedet
+
+11.
+C-M-b 向文档头部返回匹配的括号(注意可能与fcitx配置冲突)
+C-M-f 向文档尾部返回匹配的括号
+
+12.
+Emacs+highlight-parentheses高亮括号: http://www.cnblogs.com/gamesun/archive/2013/01/18/2867080.html
+
+常用颜色对照表: http://blog.csdn.net/jesusjzp/article/details/7870699
+
+13. C-[ 一般可以当做ESC来用
+C-i 一般可以当做TAB来用
+
+14. cedet 新加入头文件路径之后，记得刷新一下,快捷键是: C-c,, (就是C-c跟两个逗号)
+
+15. C-x C-@ 可以返回semantic-ia-fast-jump之前的点
+然后我C-h c 输入C-x C-@ 就看到了是运行了pop-global-mark命令，于是我自定义了一个pop-global-mark按键
+
+16.cedet semantic-ia-fast-jump终于解决了
+
+tag stack with semantic-ia-fast-jump and friends(http://comments.gmane.org/gmane.emacs.semantic/2688)里头David Engster提到
+http://sourceforge.net/mailarchive/message.php?msg_id=27414242这个帖子,From: Darren Hoo <darren.hoo@gm...> - 2011-04-26 19:27给了一段代码，解决了这个问题
+
+
+(defvar semantic-tags-location-ring (make-ring 20))
+
+(defun semantic-goto-definition (point)
+  "Goto definition using semantic-ia-fast-jump   
+save the pointer marker if tag is found"
+  (interactive "d")
+  (condition-case err
+      (progn                            
+        (ring-insert semantic-tags-location-ring (point-marker))  
+        (semantic-ia-fast-jump point))
+    (error
+     ;;if not found remove the tag saved in the ring  
+     (set-marker (ring-remove semantic-tags-location-ring 0) nil nil)
+     (signal (car err) (cdr err)))))
+
+(defun semantic-pop-tag-mark ()             
+  "popup the tag save by semantic-goto-definition"   
+  (interactive)                                                    
+  (if (ring-empty-p semantic-tags-location-ring)                   
+      (message "%s" "No more tags available")                      
+    (let* ((marker (ring-remove semantic-tags-location-ring 0))    
+              (buff (marker-buffer marker))                        
+                 (pos (marker-position marker)))                   
+      (if (not buff)                                               
+            (message "Buffer has been deleted")                    
+        (switch-to-buffer buff)                                    
+        (goto-char pos))                                           
+      (set-marker marker nil nil))))

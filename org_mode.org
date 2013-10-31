@@ -1,0 +1,56 @@
+* TODO C-S-Enter 就可以弄出一个天然的TODO了，然后你可以C-c C-s设置时间了(shift加方向键),设置deadline可以C-c C-d(依然是用Shift加方向键)
+  SCHEDULED: <2013-09-13 Fri> DEADLINE: <2013-09-20 Fri>
+* TODO C-c C-t切换各个状态(unmarked--todo--done),C-u C-c C-t会提示你填入想转换的状态
+  SCHEDULED: <2013-09-03 Tue>
+* TODO C-c C-v 树状显示所有的TODO项
+  SCHEDULED: <2013-09-13 Fri>
+* DONE S-M-RET 创建一个目前顶级的TODO项
+* DONE 计算时间,C-c C-x C-i 开始计算，C-c C-x C-o结束计算
+  CLOSED: [2013-09-13 Fri 15:17]
+  CLOCK: [2013-09-13 Fri 15:16]--[2013-09-13 Fri 15:17] =>  0:01
+* TODO 等级切换和状态切换
+** DONE 状态切换(shift加左右方向键,就可以切换任务的三种状态)
+   CLOSED: [2013-09-13 Fri 15:22]
+** TODO 等级切换(S-M-左右方向键，就可以切换TODO的等级)
+
+* TODO C-c C-q(好像C-c C-c也一样的) 打标签，比如卧室，厨房，客厅。 然后后面要查找某个标签的所有todo时，C-c a m输入标签就行了。比如，想看厨房还有哪些事情的时候，输入厨房就可以。  :san:
+* TODO xxoo								:san:
+* TODO 这一条你看不到的，因为我用C-c C-x a把它打上archive标签了,archive就是为了方便你过滤信息的  :ARCHIVE:
+
+* DONE 这一条你同样看不到(agenda view里头)			    :ARCHIVE:
+  CLOSED: [2013-09-13 Fri 17:17]
+** Archive							    :ARCHIVE:
+
+*** TODO C-c C-x A则将当前节点归入一个名为Archive的子树中，并且这个子树是位于当前级别子树的最下方。
+    :PROPERTIES:
+    :ARCHIVE_TIME: 2013-09-13 Fri 17:21
+    :END:
+
+C-Tab可以打开
+7. org mode 
+
+(1) C-c C-e t 可以使用模板
+
+(2) 无序表：以-、+、*开始
+
+(3) 有序表：以1.或1）开始
+
+(4) 使用标签时，输入一个 <e， 然后按 TAB 键就可以补全，把e换成下面的任意快捷键均可。
+快捷键          	标签
+s			#+begin_src … #+end_src
+e			#+begin_example … #+end_example
+q			#+begin_quote … #+end_quote
+v			#+begin_verse … #+end_verse
+c			#+begin_center … #+end_center
+l			#+begin_latex … #+end_latex
+L			#+latex:
+h			#+begin_html … #+end_html
+H			#+html:
+a			#+begin_ascii … #+end_ascii
+A			#+ascii:
+i			#+index: line
+I			#+include: line
+
+(5) M-S-RET 是新建TODO
+
+    M-RET 是新建同级
