@@ -20,4 +20,26 @@
 
 (global-set-key (kbd "\C-c'") 'sans-switch-to-other-buffer)
 
+(defun sans-unline ()
+  (interactive)
+  (modify-syntax-entry ?_ "w"))            ;让下划线不成为单词的一部分
+
+(defun sans-asm-comma ()
+  (interactive)
+  (setq-default gas-comment-char ?\;)
+  )
+
+(defun sans-asm-hash ()
+  (interactive)
+  (setq-default gas-comment-char ?\#)
+  )
+
+(defun sans-replace-quote ()
+  (interactive)
+  (beginning-of-buffer)
+  (replace-string "“" "\"")
+  (beginning-of-buffer)
+  (replace-string "”" "\"")
+  )
+
 (provide 'sans)

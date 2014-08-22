@@ -2,6 +2,9 @@
 (require 'sans)
 (require 'smex)
 
+(add-to-list 'load-path "~/.emacs.d/sanye/emmet-mode")
+(require 'emmet-mode)
+
 ;; for window quick change
 (require 'window-number)
 (window-number-mode 1) ;; C-x C-j arg
@@ -27,6 +30,9 @@
 (define-key global-map "\C-ca" 'org-agenda)
 (setq org-log-done t)
 (setq org-agenda-files (list "~/.things.org"))
+(setq org-export-backends             ;C-h v org-export-backends
+  '(docbook html beamer ascii latex man md texinfo))
+
 
 ;; color theme
 (require 'color-theme)
@@ -138,7 +144,7 @@
 ;; semantic-add-system-include 可以添加非标准路径的头引用，方便补全
 
 ;;html高亮,org-mode输出的html也会从这里受益
-(require 'htmlize)
+;;(require 'htmlize)
 
 ;; 显示时间
 (setq display-time-24hr-format t) ; 24小时格式
@@ -169,7 +175,22 @@
   (setq c-basic-offset 4          ;; 基本缩进宽度
 ;;        indent-tabs-mode t        ;; 禁止空格替换Tab
         default-tab-width 4))     ;; 默认Tab宽度
+
 (add-hook 'c-mode-hook 'my-c-mode-hook)
+
+;; comes from http://bbs.chinaunix.net/thread-1664899-1-1.html
+;; 标题为 : 关于在emacs里调用indent程序格式化C代码问题（懂emacs、elisp的进）。
+
+(defun edx-indent-region (start end)
+  (interactive "r")
+  (save-excursion
+    (let ((args
+           (concat "-linux")))
+      (call-process-region start end "indent" t t t args))))
+
+(add-hook 'c-mode-hook
+          '(lambda()
+             (define-key c-mode-map "\C-\M-\\" 'edx-indent-region)))
 
 ;; for sbcl
 (add-to-list 'load-path "/home/san/xtemp/oth_src/slime")
@@ -221,3 +242,124 @@ save the pointer marker if tag is found"
 (global-set-key (kbd "C-c C-]") 'semantic-goto-definition)
 (global-set-key (kbd "\C-co") 'semantic-pop-tag-mark)
 (global-set-key (kbd "\C-c\C-g") 'goto-line)
+
+
+;;;; xxxxxxxxxxx  选中片段后，C-u TAB，缩进(或者可以C-M-q)
+ 
+(defun isearch-yank-regexp (regexp)
+  "Pull REGEXP into search regexp." 
+  (let ((isearch-regexp nil)) ;; Dynamic binding of global.
+    (isearch-yank-string regexp))
+  (isearch-search-and-update))
+
+(defun isearch-yank-symbol (&optional partialp backward)
+  "Put symbol at current point into search string.
+    
+    If PARTIALP is non-nil, find all partial matches."
+  (interactive "P")
+  
+  (let (from to bound sym)
+    (setq sym
+                                        ; this block taken directly from find-tag-default
+                                        ; we couldn't use the function because we need the internal from and to values
+          (when (or (progn
+                      ;; Look at text around `point'.
+                      (save-excursion
+                        (skip-syntax-backward "w_") (setq from (point)))
+                      (save-excursion
+                        (skip-syntax-forward "w_") (setq to (point)))
+                      (> to from))
+                    ;; Look between `line-beginning-position' and `point'.
+                    (save-excursion
+                      (and (setq bound (line-beginning-position))
+                           (skip-syntax-backward "^w_" bound)
+                           (> (setq to (point)) bound)
+                           (skip-syntax-backward "w_")
+                           (setq from (point))))
+                    ;; Look between `point' and `line-end-position'.
+                    (save-excursion
+                      (and (setq bound (line-end-position))
+                           (skip-syntax-forward "^w_" bound)
+                           (< (setq from (point)) bound)
+                           (skip-syntax-forward "w_")
+                           (setq to (point)))))
+            (buffer-substring-no-properties from to)))
+    (cond ((null sym)
+           (message "No symbol at point"))
+          ((null backward)
+           (goto-char (1+ from)))
+          (t
+           (goto-char (1- to))))
+    (isearch-search)
+    (if partialp
+        (isearch-yank-string sym)
+      (isearch-yank-regexp
+       (concat "\\_<" (regexp-quote sym) "\\_>")))))
+
+(defun isearch-current-symbol (&optional partialp)
+  "Incremental search forward with symbol under point.
+    
+    Prefixed with \\[universal-argument] will find all partial
+    matches."
+  (interactive "P")
+  (let ((start (point)))
+    (isearch-forward-regexp nil 1)
+    (isearch-yank-symbol partialp)))
+
+(defun isearch-backward-current-symbol (&optional partialp)
+  "Incremental search backward with symbol under point.
+    
+    Prefixed with \\[universal-argument] will find all partial
+    matches."
+  (interactive "P")
+  (let ((start (point)))
+    (isearch-backward-regexp nil 1)
+    (isearch-yank-symbol partialp)))
+
+;; Subsequent hitting of the keys will increment to the next
+;; match--duplicating `C-s' and `C-r', respectively.
+(define-key isearch-mode-map [f3] 'isearch-repeat-forward)
+(define-key isearch-mode-map [(control f3)] 'isearch-repeat-backward)
+
+(defun select-current-line ()
+  "Select the current line"
+  (interactive)
+  (end-of-line) ; move to end of line
+  (set-mark (line-beginning-position)))
+(global-set-key (kbd "C-c C-v") 'select-current-line)
+(global-set-key (kbd "C-;") 'comment-or-uncomment-region) ; M-; 是添加注释
+
+;; go autocomplete
+(require 'go-autocomplete)
+
+;; go syntax highlight
+(require 'go-mode)
+
+;;(setq case-fold-search nil)             ;If case-fold-search is set to nil, case is always significant in all searches
+;; seq将会无效
+;; http://stackoverflow.com/questions/5345051/setq-of-case-sensitivity-in-emacs-has-no-effect
+;; That's normal behavior for buffer-local variables. setq-default can be used to establish a default value for them.
+;; You can determine that a variable is buffer local by checking out its documentation, using C-h v case-fold-search (or M-x describe-variable),
+
+(setq-default case-fold-search nil)
+
+;; Enables highlight-parentheses-mode on all buffers : http://www.emacswiki.org/emacs/HighlightParentheses
+(define-globalized-minor-mode global-highlight-parentheses-mode
+  highlight-parentheses-mode
+  (lambda ()
+    (highlight-parentheses-mode t)))
+(global-highlight-parentheses-mode t)
+
+(require 'quickrun)
+(require 'lua-mode)
+
+(require 'gas-mode)
+(add-to-list 'auto-mode-alist '("\\.[sS]\\'" . gas-mode))
+(setq-default gas-comment-char ?\;)
+(setq-default gas-opcode-column 4)
+(setq-default gas-argument-column 10)
+
+(add-hook 'html-mode-hook
+          (lambda ()
+            ;; Default indentation is usually 2 spaces, changing to 4.
+            (set (make-local-variable 'sgml-basic-offset) 4)))

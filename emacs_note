@@ -139,3 +139,13 @@ save the pointer marker if tag is found"
         (switch-to-buffer buff)                                    
         (goto-char pos))                                           
       (set-marker marker nil nil))))
+17. C-x h 选择整个
+选择一个大括号之内的所有内容，只需要在左边括号标记，然后C-M-n(或者C-M-f)就全部选中了，适用于区域重缩进(但是感觉vim的va{更快)。
+
+18. cedet添加路径
+
+对于当前目录也需要添加，例如当前在/home/xx/prj/xxc
+
+添加路径/home/xx/prj/xxc/.
+
+不要写成/home/xx/prj/xxc/./
