@@ -377,4 +377,4 @@ save the pointer marker if tag is found"
             (set (make-local-variable 'sgml-basic-offset) 4)))
 
 (add-hook 'go-mode-hook (lambda ()
-                          (local-set-key (kbd \"M-.\") 'go-goto-definition)))
+                          (local-set-key (kbd "C-c C-]") 'go-goto-definition)))
