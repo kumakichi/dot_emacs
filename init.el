@@ -226,6 +226,18 @@ save the pointer marker if tag is found"
      (set-marker (ring-remove semantic-tags-location-ring 0) nil nil)
      (signal (car err) (cdr err)))))
 
+(defun go-goto-definition (point)
+  "Goto definition using godef-jump save the pointer marker if tag is found"
+  (interactive "d")
+  (condition-case err
+      (progn                            
+        (ring-insert semantic-tags-location-ring (point-marker))  
+        (godef-jump point))
+    (error
+     ;;if not found remove the tag saved in the ring  
+     (set-marker (ring-remove semantic-tags-location-ring 0) nil nil)
+     (signal (car err) (cdr err)))))
+
 (defun semantic-pop-tag-mark ()             
   "popup the tag save by semantic-goto-definition"   
   (interactive)                                                    
@@ -363,3 +375,6 @@ save the pointer marker if tag is found"
           (lambda ()
             ;; Default indentation is usually 2 spaces, changing to 4.
             (set (make-local-variable 'sgml-basic-offset) 4)))
+
+(add-hook 'go-mode-hook (lambda ()
+                          (local-set-key (kbd \"M-.\") 'go-goto-definition)))

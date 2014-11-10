@@ -149,3 +149,10 @@ save the pointer marker if tag is found"
 添加路径/home/xx/prj/xxc/.
 
 不要写成/home/xx/prj/xxc/./
+
+19.
+
+词的upper case , lower case 切换(alt+u , alt+l)
+
+region的upper case, lower case 切换(C-x C-u, C-x C-l)
+
