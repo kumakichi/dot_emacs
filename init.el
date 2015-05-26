@@ -378,3 +378,4 @@ save the pointer marker if tag is found"
 
 (add-hook 'go-mode-hook (lambda ()
                           (local-set-key (kbd "C-c C-]") 'go-goto-definition)))
+(require 'sans-org-blog)
