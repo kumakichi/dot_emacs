@@ -24,6 +24,7 @@
 (global-set-key (kbd "C-c C-c M-x") 'execute-extended-command)
 
 ;;下面5行是为了使用org-mode
+(add-to-list 'load-path "/usr/share/emacs/site-lisp/org") ;org-mode 8.2->sudo make install
 (require 'org)
 (add-to-list 'auto-mode-alist '("\\.org$" . org-mode))
 (define-key global-map "\C-cl" 'org-store-link)
@@ -345,7 +346,7 @@ save the pointer marker if tag is found"
 (require 'go-autocomplete)
 
 ;; go syntax highlight
-(require 'go-mode)
+(require 'go-mode-autoloads)
 
 ;;(setq case-fold-search nil)             ;If case-fold-search is set to nil, case is always significant in all searches
 ;; seq将会无效
@@ -377,5 +378,6 @@ save the pointer marker if tag is found"
             (set (make-local-variable 'sgml-basic-offset) 4)))
 
 (add-hook 'go-mode-hook (lambda ()
+                          (local-set-key (kbd "C-M-\\") 'gofmt)
                           (local-set-key (kbd "C-c C-]") 'go-goto-definition)))
 (require 'sans-org-blog)

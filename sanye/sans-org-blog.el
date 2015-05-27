@@ -1,4 +1,4 @@
-(require 'org-publish)
+(require 'ox-publish)
 (setq org-publish-project-alist
       '(
         ("blog-notes"
@@ -12,11 +12,31 @@
          :auto-preamble t
          :auto-sitemap t                ; Generate sitemap.org automagically...
          :sitemap-filename "index.org"  ; ... call it sitemap.org (it's the default)...
-         :sitemap-title "San's notebook"         ; ... with title 'Sitemap'.
-         :html-link-home "index.html"
-         :author "kumakichi"
-         :email "$(dc -e 40964654306938118710083764053554616036618P)"
-         :style    "<link rel=\"stylesheet\" type=\"text/css\" href=\"css/worg.css\"/>"
+         :sitemap-title "Sitemap"         ; ... with title 'Sitemap'.
+         :author "sanye"
+         :email ""
+         :html-head "<link rel='stylesheet' type='text/css' href='css/main.css'/>
+		 <link rel='shortcut icon' href='img/favicon.ico'/>"
+         :html-preamble "<div id='header'>
+		<div class='inner'>
+			<h1 id='site-title'><a href='/'>San's notebook</a></h1>
+			<div>
+				<a href='###' id='site-nav-btn'>MenuBar</a>
+				<ul id='site-nav' class='vertical-nav mobi-hid'>
+					<li class='current-page'><a href='/'>Home</a></li>
+					<li><a href='/about.html'>About</a></li>
+				</ul>
+
+				<form id='site-search' method='get' action='https://www.google.com/search'>
+				<input type='hidden' name='q' value='site:kumakichi.github.io'>
+				<input type='text' name='q' placeholder='Search...'>
+				<button class='btn-search' type='submit'>Search</button>
+				</form>
+
+				<div style='clear:both;'> </div>
+			</div>
+		</div>
+	</div>"
          :html-postamble "<div id='disqus_thread'></div>
 			<script type='text/javascript'>
 			    /* * * CONFIGURATION VARIABLES * * */
@@ -30,7 +50,8 @@
 			    })();
 			</script>
 			<noscript>Please enable JavaScript to view the <a href='https://disqus.com/?ref_noscript' rel='nofollow'>comments powered by Disqus.</a></noscript>
-			<p class='author'>Author: %a (%e)</p><p>Exported At %T. Created by %c </p>"
+			<p class='author'>Author: %a %e</p><p>Exported At %T. Created by %c </p>
+			<a href='#' class='back-to-top' id='fixed-back-to-top' style='display: inline;'></a>"
     	)
         ("blog-static"
          :base-directory "/var/virtual/home-bak/org/blog/"
