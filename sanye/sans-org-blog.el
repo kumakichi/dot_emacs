@@ -1,4 +1,5 @@
 (require 'ox-publish)
+(setq org-export-with-sub-superscripts nil)
 (setq org-publish-project-alist
       '(
         ("blog-notes"
