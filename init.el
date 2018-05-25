@@ -14,7 +14,7 @@
  ;; If there is more than one, they won't work right.
  '(package-selected-packages
    (quote
-    (ox-twbs go-mode lua-mode quickrun slime go-autocomplete google-c-style highlight-parentheses sr-speedbar linum-relative smex molokai-theme org))))
+    (macrostep go-mode lua-mode quickrun slime go-autocomplete google-c-style highlight-parentheses sr-speedbar linum-relative smex molokai-theme org))))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
@@ -361,4 +361,3 @@ save the pointer marker if tag is found"
                           (local-set-key (kbd "C-c C-]") 'go-goto-definition)))
 (require 'sans-org-blog)
 (save-place-mode 1)
-;(global-unset-key (kbd "C-SPC"))
